@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Login - Personal Management and Expenses By Febriyeni{% endblock %}
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-icon">🔐</div>
+        <h2>Selamat Datang</h2>
+        <p class="text-muted">Login ke Personal Management and Expenses</p>
+
+        <form method="POST" class="mt-4">
+            <label class="form-label">Email</label>
+            <input type="email" name="email" class="form-control" required
+                   value="{{ email_for_resend or '' }}">
+
+            <label class="form-label mt-3">Password</label>
+            <input type="password" name="password" class="form-control" required>
+
+            <button class="btn btn-main w-100 mt-4">Login</button>
+        </form>
+
+        {% if show_resend %}
+        <form method="POST" action="{{ url_for('resend_verification') }}" class="mt-3">
+            <input type="hidden" name="email" value="{{ email_for_resend }}">
+            <div class="text-center small text-muted mb-2">
+                Belum menerima email verifikasi?
+            </div>
+            <input type="password" name="password" class="form-control"
+                   placeholder="Masukkan password untuk kirim ulang" required>
+            <button class="btn btn-outline-main w-100 mt-2">Kirim Ulang Verifikasi</button>
+        </form>
+        {% endif %}
+
+        <p class="text-center mt-4 mb-0">
+            Belum punya akun?
+            <a href="{{ url_for('register') }}">Register</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

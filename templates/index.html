@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - Personal Management and Expenses By Febriyeni{% endblock %}
+{% block content %}
+
+<div class="hero-card mb-4">
+    <div>
+        <span class="badge-soft">Personal Management and Expenses By Febriyeni</span>
+        <h1 class="mt-3">Halo, {{ user.email }}</h1>
+        <p class="mb-0">Kelola pengeluaran dan tugas harian dalam satu aplikasi.</p>
+    </div>
+</div>
+
+{% if not firebase_ok %}
+<div class="alert alert-danger">
+    <strong>Firebase belum tersambung.</strong><br>
+    {{ firebase_error_message }}
+</div>
+{% endif %}
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="stat-label">Total Pengeluaran</div>
+            <div class="stat-value">Rp {{ "{:,.0f}".format(total_expense).replace(",", ".") }}</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="stat-label">Tugas Selesai</div>
+            <div class="stat-value">{{ completed }}</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="stat-label">Tugas Pending</div>
+            <div class="stat-value">{{ pending }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <section class="panel-card">
+            <div class="section-head">
+                <div>
+                    <h3>Expense Tracker</h3>
+                    <p>Catat pengeluaranmu.</p>
+                </div>
+            </div>
+
+            <form method="POST" action="{{ url_for('add_expense') }}" class="row g-2">
+                <div class="col-md-5">
+                    <input name="description" class="form-control" placeholder="Contoh: Makan siang" required>
+                </div>
+                <div class="col-md-3">
+                    <input name="amount" type="number" min="1" class="form-control" placeholder="Nominal" required>
+                </div>
+                <div class="col-md-4">
+                    <select name="category" class="form-select">
+                        <option>Makanan</option>
+                        <option>Transportasi</option>
+                        <option>Belanja</option>
+                        <option>Tagihan</option>
+                        <option>Hiburan</option>
+                        <option>Lainnya</option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <button class="btn btn-main">+ Tambah Pengeluaran</button>
+                </div>
+            </form>
+
+            <div class="list-area mt-4">
+            {% for item in expenses|reverse %}
+                <div class="list-item">
+                    <div>
+                        <strong>{{ item.description }}</strong>
+                        <div class="small text-muted">{{ item.category }}</div>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <strong>Rp {{ "{:,.0f}".format(item.amount|float).replace(",", ".") }}</strong>
+                        <form method="POST" action="{{ url_for('delete_expense', item_id=item._id) }}">
+                            <button class="btn btn-sm btn-delete">Hapus</button>
+                        </form>
+                    </div>
+                </div>
+            {% else %}
+                <div class="empty-state">Belum ada pengeluaran.</div>
+            {% endfor %}
+            </div>
+        </section>
+    </div>
+
+    <div class="col-lg-6">
+        <section class="panel-card">
+            <div class="section-head">
+                <div>
+                    <h3>To-Do List</h3>
+                    <p>Atur tugas yang harus diselesaikan.</p>
+                </div>
+            </div>
+
+            <form method="POST" action="{{ url_for('add_todo') }}" class="d-flex gap-2">
+                <input name="title" class="form-control" placeholder="Contoh: Kerjakan tugas" required>
+                <button class="btn btn-main">Tambah</button>
+            </form>
+
+            <div class="list-area mt-4">
+            {% for item in todos|reverse %}
+                <div class="list-item">
+                    <div class="{{ 'todo-done' if item.completed else '' }}">
+                        {{ item.title }}
+                    </div>
+                    <div class="d-flex gap-2">
+                        <form method="POST" action="{{ url_for('toggle_todo', item_id=item._id) }}">
+                            <button class="btn btn-sm btn-outline-main">
+                                {{ 'Batal' if item.completed else 'Selesai' }}
+                            </button>
+                        </form>
+                        <form method="POST" action="{{ url_for('delete_todo', item_id=item._id) }}">
+                            <button class="btn btn-sm btn-delete">Hapus</button>
+                        </form>
+                    </div>
+                </div>
+            {% else %}
+                <div class="empty-state">Belum ada tugas.</div>
+            {% endfor %}
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}
