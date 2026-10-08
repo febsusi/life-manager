@@ -1,0 +1,15 @@
+[project]
+name = "life-manager-new"
+version = "1.0.0"
+description = "Life Manager Flask application"
+requires-python = ">=3.13"
+dependencies = [
+    "flask",
+    "requests",
+]
+
+[dependency-groups]
+dev = [
+    "workers-py>=1.9",
+    "workers-runtime-sdk",
+]

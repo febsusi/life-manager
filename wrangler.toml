@@ -1,0 +1,10 @@
+name = "life-manager-new"
+main = "worker.py"
+compatibility_date = "2026-10-08"
+compatibility_flags = ["python_workers"]
+
+[vars]
+# Set these with `wrangler secret put` for production:
+# SECRET_KEY
+# FIREBASE_DB_URL
+# FIREBASE_API_KEY
